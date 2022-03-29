@@ -23,7 +23,7 @@ class SoundService {
     }
 
     async getById(id: number): Promise<Sound | null> {
-        return prisma.sound.findUnique({ where: { id_: id } });
+        return prisma.sound.findUnique({ where: { id_: id }, include: { User_: true } });
     }
 
     // Methods for updating Sound information
@@ -40,6 +40,10 @@ class SoundService {
 
     async deleteById(id: number): Promise<Sound> {
         return prisma.sound.delete({ where: { id_: id } });
+    }
+
+    async saveSound(soundId: number, audioLink: string | undefined): Promise<Sound> {
+        return prisma.sound.update({ data: { isRecording: false, recorded: true, audioLink }, where: { id_: soundId } });
     }
 
     async beginRecord(UserId: number): Promise<PTypes.SoundCreateInput | null> {

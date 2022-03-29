@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
         cb(null, pathFile)
     },
     filename: function (req, file, cb) {
-        const fileHash = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        const fileHash = file.originalname + ".mp3"
         cb(null, `${fileHash}`)
     }
 })
@@ -33,8 +33,8 @@ router
 
     .post("/send", upload.single("audio"), async (req: express.Request, res: express.Response) => {
 
-        sound.addOne(req.body)
-            .then((data) => { res.status(201).json({ data, message: "object sound created successfully" }); })
+        sound.saveSound(Number(req.body.soundId), req.file?.destination)
+            .then((data) => { res.status(201).json(data); })
             .catch((error: Error) => {
                 console.error(error);
                 res.status(500).json({ error: "InternalError", message: "Something wrong" });
@@ -59,22 +59,6 @@ router
 
     })
 
-    /**
-    * @descr get all sound which are not recorded
-    * @route GET /sound/notrecorded/count
-    * @access public
-    */
-
-    .get("/count/unrecorded", async (req: express.Request, res: express.Response) => {
-
-        sound.count({})
-            .then((data) => { res.json(data); })
-            .catch((error: Error) => {
-                console.error(error);
-                res.status(500).json({ error: "InternalError", message: "Something wrong" });
-            });
-
-    })
 
     .get("/begin/:userId", async (req: express.Request, res: express.Response) => {
 
@@ -95,7 +79,24 @@ router
 
     .get("/count/recorded/:userId", async (req: express.Request, res: express.Response) => {
 
-        sound.count({ recorded: false, UserId_: Number(req.params.userId) })
+        sound.count({ recorded: true, UserId_: Number(req.params.userId) })
+            .then((data) => { res.json(data); })
+            .catch((error: Error) => {
+                console.error(error);
+                res.status(500).json({ error: "InternalError", message: "Something wrong" });
+            });
+
+    })
+
+    /**
+  * @descr get all sound which are not recorded
+  * @route GET /sound/notrecorded/count
+  * @access public
+  */
+
+    .get("/count/unrecorded", async (req: express.Request, res: express.Response) => {
+
+        sound.count({ recorded: false })
             .then((data) => { res.json(data); })
             .catch((error: Error) => {
                 console.error(error);
