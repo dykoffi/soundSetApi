@@ -1,27 +1,36 @@
 import express from "express";
 import multer from "multer";
+import multerS3 from "multer-s3";
 import { join } from "path";
 import { cwd } from "process";
 import PTypes from "../../configs/db/types"
 import soundService from "./sound.service"
+import AWS from "aws-sdk"
 
 const router: express.Router = require("express").Router();
 const sound = new soundService();
 
 type PError = PTypes.PrismaClientKnownRequestError | Error
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        let pathFile = join(cwd(), "uploads")
-        cb(null, pathFile)
-    },
-    filename: function (req, file, cb) {
-        const fileHash = file.originalname + ".mp3"
-        cb(null, `${fileHash}`)
-    }
-})
+let s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+AWS.config.update({ region: 'eu-west-3' });
 
-const upload = multer({ storage: storage })
+// const upload = multer({ storage: storage })
+
+var upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'audioset-recoder',
+        acl: 'public-read',
+
+        metadata: function (req, file, cb) {
+            cb(null, { fieldName: file.fieldname });
+        },
+        key: function (req, file, cb) {
+            cb(null, file.originalname + ".mp3")
+        }
+    })
+})
 
 router
 
@@ -33,7 +42,9 @@ router
 
     .post("/send", upload.single("audio"), async (req: express.Request, res: express.Response) => {
 
-        sound.saveSound(Number(req.body.soundId), req.file?.destination)
+        let dataFile: any = req.file
+
+        sound.saveSound(Number(req.body.soundId), dataFile.location)
             .then((data) => { res.status(201).json(data); })
             .catch((error: Error) => {
                 console.error(error);
@@ -107,7 +118,7 @@ router
 
     .get("/recorded", async (req: express.Request, res: express.Response) => {
 
-        sound.getAll({ where: { recorded: true } })
+        sound.getAll({ where: { recorded: true }, include: { User_: true } })
             .then((data) => { res.json(data); })
             .catch((error: Error) => {
                 console.error(error);
