@@ -105,6 +105,17 @@ router
 
     })
 
+    .get("/recorded", async (req: express.Request, res: express.Response) => {
+
+        sound.getAll({ where: { recorded: true } })
+            .then((data) => { res.json(data); })
+            .catch((error: Error) => {
+                console.error(error);
+                res.status(500).json({ error: "InternalError", message: "Something wrong" });
+            });
+
+    })
+
 
     /**
     * @descr Show specify sound identified by id
