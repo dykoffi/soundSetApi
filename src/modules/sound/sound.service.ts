@@ -42,8 +42,8 @@ class SoundService {
         return prisma.sound.delete({ where: { id_: id } });
     }
 
-    async beginRecord(UserId: number): Promise<Sound | null> {
-        
+    async beginRecord(UserId: number): Promise<PTypes.SoundCreateInput | null> {
+
         //Get is recording audio for this user
         let currentRecords = await prisma.sound.findMany({ where: { UserId_: UserId, isRecording: true }, select: { id_: true } })
         //Get undesired sound
@@ -61,7 +61,7 @@ class SoundService {
         //Get new record for this user
         let newRecord = await prisma.sound.findFirst({ where: { AND: { isRecording: false, recorded: false, id_: { notIn: undesiredSound } } } })
 
-        return prisma.sound.update({ data: { isRecording: true, User_: { connect: { id_: UserId } } }, where: { id_: newRecord?.id_ } })
+        return prisma.sound.update({ select: { id_: true, ref: true, fr: true, bci: true }, data: { isRecording: true, User_: { connect: { id_: UserId } } }, where: { id_: newRecord?.id_ } })
     }
 
 }
