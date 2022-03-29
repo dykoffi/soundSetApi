@@ -1,0 +1,188 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "Sound": {
+      "type": "object",
+      "properties": {
+        "id_": {
+          "type": "integer"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "fr": {
+          "type": "string"
+        },
+        "bci": {
+          "type": "string"
+        },
+        "recorded": {
+          "type": "boolean",
+          "default": false
+        },
+        "isRecording": {
+          "type": "boolean",
+          "default": false
+        },
+        "audioLink": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "User_": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/User"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "createdAt_": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id_": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "year": {
+          "type": "integer"
+        },
+        "genre": {
+          "type": "string",
+          "enum": [
+            "M",
+            "F"
+          ]
+        },
+        "Sound_": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sound"
+          }
+        },
+        "undesiredSounds_": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "createdAt_": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Token_": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pass": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "Log_": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "protocol": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "method": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hostname": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "httpVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "statusCode": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "userIp": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "userReferer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "userAgent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "sound": {
+      "$ref": "#/definitions/Sound"
+    },
+    "user": {
+      "$ref": "#/definitions/User"
+    },
+    "token_": {
+      "$ref": "#/definitions/Token_"
+    },
+    "log_": {
+      "$ref": "#/definitions/Log_"
+    }
+  }
+}

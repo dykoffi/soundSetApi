@@ -1,0 +1,69 @@
+import prisma from "../../configs/db";
+import { Sound } from "@prisma/client";
+import PTypes, { BatchPayload } from "../../configs/db/types"
+
+class SoundService {
+
+    constructor() { }
+
+    // Methods for creating Sound
+
+    async addOne(data: PTypes.SoundCreateInput): Promise<Sound> {
+        return prisma.sound.create({ data });
+    }
+
+    // Methods for get Sound information
+
+    async getAll(args: PTypes.SoundFindManyArgs): Promise<Array<Sound>> {
+        return prisma.sound.findMany(args);
+    }
+
+    async count(where: PTypes.SoundWhereInput): Promise<number> {
+        return prisma.sound.count({ where });
+    }
+
+    async getById(id: number): Promise<Sound | null> {
+        return prisma.sound.findUnique({ where: { id_: id } });
+    }
+
+    // Methods for updating Sound information
+
+    async updateById(id: number, args: PTypes.SoundUpdateInput): Promise<Sound> {
+        return prisma.sound.update({ where: { id_: id }, data: args });
+    }
+
+    // Methods for deleting Sound
+
+    async deleteAll(): Promise<BatchPayload> {
+        return prisma.sound.deleteMany({});
+    }
+
+    async deleteById(id: number): Promise<Sound> {
+        return prisma.sound.delete({ where: { id_: id } });
+    }
+
+    async beginRecord(UserId: number): Promise<Sound | null> {
+        
+        //Get is recording audio for this user
+        let currentRecords = await prisma.sound.findMany({ where: { UserId_: UserId, isRecording: true }, select: { id_: true } })
+        //Get undesired sound
+        let undesiredSound = (await prisma.user.findUnique({ where: { id_: UserId }, select: { undesiredSounds_: true } }))?.undesiredSounds_
+        //Free all audio recording by this user
+        await prisma.sound.updateMany({ data: { UserId_: null, isRecording: false }, where: { UserId_: UserId, recorded: false, isRecording: true } })
+
+        // Set undesiredSound for this user
+
+        currentRecords.forEach(obj => {
+            undesiredSound?.push(obj.id_)
+        })
+        await prisma.user.update({ data: { undesiredSounds_: { set: undesiredSound } }, where: { id_: UserId } })
+
+        //Get new record for this user
+        let newRecord = await prisma.sound.findFirst({ where: { AND: { isRecording: false, recorded: false, id_: { notIn: undesiredSound } } } })
+
+        return prisma.sound.update({ data: { isRecording: true, User_: { connect: { id_: UserId } } }, where: { id_: newRecord?.id_ } })
+    }
+
+}
+
+export default SoundService;

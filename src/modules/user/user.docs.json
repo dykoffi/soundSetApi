@@ -1,0 +1,195 @@
+{
+    "/user": {
+        "get": {
+            "operationId": "getusers",
+            "tags": [
+                "User"
+            ],
+            "summary": "Returns all users",
+            "responses": {
+                "200": {
+                    "description": "List of users",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/User"
+                                }
+                            }
+                        }
+                    }
+                },
+                "403": {
+                    "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "500": {
+                    "$ref": "#/components/responses/InternalError"
+                }
+            }
+        },
+        "post": {
+            "operationId": "adduser",
+            "tags": [
+                "User"
+            ],
+            "summary": "Add new user",
+            "requestBody": {
+                "content": {
+                    "application/x-www-form-urlencoded": {
+                        "schema": {
+                            "$ref": "#/inputs/User"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "201": {
+                    "description": "table created",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "data": {
+                                        "$ref": "#/definitions/User"
+                                    },
+                                    "message": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "403": {
+                    "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "500": {
+                    "$ref": "#/components/responses/InternalError"
+                }
+            }
+        }
+    },
+    "/user/{id}": {
+        "get": {
+            "operationId": "getuser",
+            "tags": [
+                "User"
+            ],
+            "summary": "Returns specific user designated by id",
+            "responses": {
+                "200": {
+                    "description": "object user basic information",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/User"
+                            }
+                        }
+                    }
+                },
+                "403": {
+                    "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "404": {
+                    "$ref": "#/components/responses/NotFoundError"
+                },
+                "500": {
+                    "$ref": "#/components/responses/InternalError"
+                }
+            }
+        },
+        "put": {
+            "operationId": "updateuser",
+            "tags": [
+                "User"
+            ],
+            "summary": "Update user",
+            "requestBody": {
+                "content": {
+                    "application/x-www-form-urlencoded": {
+                        "schema": {
+                            "$ref": "#/inputs/User"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "201": {
+                    "description": "object user updated successfully",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "data": {
+                                        "$ref": "#/definitions/User"
+                                    },
+                                    "message": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "403": {
+                    "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "404": {
+                    "$ref": "#/components/responses/NotFoundError"
+                },
+                "500": {
+                    "$ref": "#/components/responses/InternalError"
+                }
+            }
+        },
+        "delete": {
+            "operationId": "deleteuser",
+            "tags": [
+                "User"
+            ],
+            "summary": "Delete specific user designated by id",
+            "responses": {
+                "201": {
+                    "description": "object user deleted successfully",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "data": {
+                                        "$ref": "#/definitions/User"
+                                    },
+                                    "message": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "403": {
+                    "$ref": "#/components/responses/UnauthorizedError"
+                },
+                "404": {
+                    "$ref": "#/components/responses/NotFoundError"
+                },
+                "500": {
+                    "$ref": "#/components/responses/InternalError"
+                }
+            }
+        },
+        "parameters": [
+            {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
+            }
+        ]
+    }
+}

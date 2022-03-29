@@ -1,0 +1,52 @@
+version: "3.9" # optional since v1.27.0
+services:
+  soundSetApi:
+      image: dykoffi/soundSetApi:latest
+      container_name: soundSetApi
+      environment:
+        - DATABASE_URL=postgres://soundSetApi_user:4134@soundSetApi_db_staging/soundSetApi_db_staging
+      depends_on:
+        - soundSetApi_db_staging
+      ports:
+        - 13759:8080
+
+  soundSetApi_db_dev:
+    image: postgres:14-alpine
+    container_name: soundSetApi_db_dev
+    environment:
+      - POSTGRES_USER=soundSetApi_user
+      - POSTGRES_DB=soundSetApi_db_dev
+      - POSTGRES_PASSWORD=4134
+    ports:
+      - 21822:5432
+    volumes:
+      - soundSetApi_vol_dev:/var/lib/postgresql/data
+
+  soundSetApi_db_staging:
+    image: postgres:14-alpine
+    container_name: soundSetApi_db_staging
+    environment:
+      - POSTGRES_USER=soundSetApi_user
+      - POSTGRES_DB=soundSetApi_db_staging
+      - POSTGRES_PASSWORD=4134
+    ports:
+      - 61232:5432
+    volumes:
+      - soundSetApi_vol_staging:/var/lib/postgresql/data
+
+  soundSetApi_prometheus:
+      image: prom/prometheus
+      container_name: soundSetApi_prometheus
+      ports:
+        - 9090:9090
+      volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      depends_on:
+        - soundSetApi
+
+
+volumes:
+  soundSetApi_vol_dev:
+    driver: local
+  soundSetApi_vol_staging:
+    driver: local

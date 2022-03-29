@@ -1,0 +1,216 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "soundsetapi",
+        "version": "1.0.0",
+        "contact": {
+            "email": "koffiedy@gmail.com",
+            "name": "KOFFI Edy",
+            "url": "https://www.linkedin.com/in/edy-koffi-948494192/"
+        }
+    },
+    "definitions": {
+        "Sound": {
+            "type": "object",
+            "properties": {
+                "id_": {
+                    "type": "integer"
+                },
+                "ref": {
+                    "type": "string"
+                },
+                "fr": {
+                    "type": "string"
+                },
+                "bci": {
+                    "type": "string"
+                },
+                "recorded": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "isRecording": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "audioLink": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "User_": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/User"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "createdAt_": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "User": {
+            "type": "object",
+            "properties": {
+                "id_": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                },
+                "genre": {
+                    "type": "string",
+                    "enum": [
+                        "M",
+                        "F"
+                    ]
+                },
+                "Sound_": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Sound"
+                    }
+                },
+                "undesiredSounds_": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "createdAt_": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        }
+    },
+    "inputs": {
+        "Sound": {
+            "type": "object",
+            "properties": {
+                "ref": {
+                    "type": "string"
+                },
+                "fr": {
+                    "type": "string"
+                },
+                "bci": {
+                    "type": "string"
+                },
+                "recorded": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "isRecording": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "audioLink": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            }
+        },
+        "User": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                },
+                "genre": {
+                    "type": "string",
+                    "enum": [
+                        "M",
+                        "F"
+                    ]
+                }
+            }
+        }
+    },
+    "additionnalsInputs": {
+        "Sound": {
+            "type": "object",
+            "properties": {}
+        },
+        "User": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    "components": {
+        "schemas": {
+            "Sound": {
+                "$ref": "#/definitions/Sound"
+            },
+            "User": {
+                "$ref": "#/definitions/User"
+            }
+        },
+        "responses": {
+            "ExampleError": {
+                "content": {
+                    "schema": {
+                        "type": "object",
+                        "required": [
+                            "message",
+                            "error"
+                        ],
+                        "properties": {
+                            "error": {
+                                "type": "string"
+                            },
+                            "message": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "UnauthorizedError": {
+                "description": "UnauthorizedError",
+                "content": {
+                    "application/json": {
+                        "$ref": "#/components/responses/ExampleError/content"
+                    }
+                }
+            },
+            "InternalError": {
+                "description": "InternalError",
+                "content": {
+                    "application/json": {
+                        "$ref": "#/components/responses/ExampleError/content"
+                    }
+                }
+            },
+            "NotFoundError": {
+                "description": "NotFoundError",
+                "content": {
+                    "application/json": {
+                        "$ref": "#/components/responses/ExampleError/content"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "x-access-token"
+            }
+        }
+    }
+}

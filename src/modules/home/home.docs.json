@@ -1,0 +1,32 @@
+{
+    "/": {
+        "get": {
+            "operationId": "getTest",
+            "tags": [
+                "Home"
+            ],
+            "security": [],
+            "summary": "Test API endpoint",
+            "responses": {
+                "200": {
+                    "description": "Test ok",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "500": {
+                    "$ref": "#/components/responses/InternalError"
+                }
+            }
+        }
+    }
+}
