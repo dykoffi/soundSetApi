@@ -22,7 +22,7 @@ COPY build /App
 RUN prisma generate
 
 # Expose port for communication
-EXPOSE 8080
+EXPOSE 80
 
 # update database url info
 CMD echo "DATABASE_URL=${DATABASE_URL}" > .env \
