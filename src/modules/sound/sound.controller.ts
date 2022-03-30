@@ -12,7 +12,7 @@ const sound = new soundService();
 
 type PError = PTypes.PrismaClientKnownRequestError | Error
 
-let s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+let s3 = new AWS.S3({ apiVersion: '2006-03-01', accessKeyId: "AKIAVE5OQIXAXP7N2UOM", secretAccessKey: "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" });
 AWS.config.update({ region: 'eu-west-3' });
 
 // const upload = multer({ storage: storage })
