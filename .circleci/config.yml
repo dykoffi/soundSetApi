@@ -18,6 +18,7 @@ jobs:
       - run: yarn add cqx --dev
       - run: yarn install
       - run: npx prisma generate
+      - run: npx cqx build
       - run: zip -r build.zip build
       - store_artifacts:
           path: build.zip
@@ -36,7 +37,7 @@ jobs:
           at: ~/project
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: docker build -t dykoffi/soundset:2.0.0 .
-      - run: docker push dykoffi/sounset:2.0.0
+      - run: docker push dykoffi/soundset:2.0.0
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
