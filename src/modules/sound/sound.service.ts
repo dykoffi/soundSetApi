@@ -42,8 +42,9 @@ class SoundService {
         return prisma.sound.delete({ where: { id_: id } });
     }
 
-    async saveSound(soundId: number, audioLink: string | undefined): Promise<Sound> {
-        return prisma.sound.update({ data: { isRecording: false, recorded: true, audioLink }, where: { id_: soundId } });
+    async saveSound(soundId: number, audioLink: string | undefined, UserId: number): Promise<PTypes.SoundCreateInput | null> {
+        await prisma.sound.update({ data: { isRecording: false, recorded: true, audioLink }, where: { id_: soundId } });
+        return this.beginRecord(UserId)
     }
 
     async beginRecord(UserId: number): Promise<PTypes.SoundCreateInput | null> {
@@ -60,6 +61,7 @@ class SoundService {
         currentRecords.forEach(obj => {
             undesiredSound?.push(obj.id_)
         })
+        
         await prisma.user.update({ data: { undesiredSounds_: { set: undesiredSound } }, where: { id_: UserId } })
 
         //Get new record for this user

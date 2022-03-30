@@ -40,12 +40,13 @@ router
      * @access public
      */
 
-    .post("/send", upload.single("audio"), async (req: express.Request, res: express.Response) => {
+
+    .use("/send", upload.single("audio"))
+    .post("/send", async (req: express.Request, res: express.Response) => {
 
         let dataFile: any = req.file
-
-        sound.saveSound(Number(req.body.soundId), dataFile.location)
-            .then((data) => { res.status(201).json(data); })
+        sound.saveSound(Number(req.body.soundId), dataFile.location, Number(req.body.userId))
+            .then((data) => { console.timeEnd("de"); res.status(201).json(data); })
             .catch((error: Error) => {
                 console.error(error);
                 res.status(500).json({ error: "InternalError", message: "Something wrong" });

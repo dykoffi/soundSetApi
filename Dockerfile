@@ -27,4 +27,4 @@ EXPOSE 80
 # update database url info
 CMD echo "DATABASE_URL=${DATABASE_URL}" > .env \
     && prisma migrate deploy \
-    && NODE_ENV=production pm2-runtime index.js --name soundSetApi -i 4
+    && NODE_ENV=production pm2-runtime index.js --name soundSetApi -i max
