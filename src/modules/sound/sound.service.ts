@@ -1,7 +1,6 @@
 import prisma from "../../configs/db";
 import { Sound } from "@prisma/client";
 import PTypes, { BatchPayload } from "../../configs/db/types"
-
 class SoundService {
 
     constructor() { }
@@ -43,31 +42,37 @@ class SoundService {
     }
 
     async saveSound(soundId: number, audioLink: string | undefined, UserId: number): Promise<PTypes.SoundCreateInput | null> {
-        await prisma.sound.update({ data: { isRecording: false, recorded: true, audioLink }, where: { id_: soundId } });
-        return this.beginRecord(UserId)
+        return prisma.sound.update({ data: { isRecording: false, recorded: true, audioLink, User_: { connect: { id_: UserId } } }, where: { id_: soundId } });
+        // return this.beginRecord(UserId)
     }
 
     async beginRecord(UserId: number): Promise<PTypes.SoundCreateInput | null> {
 
-        //Get is recording audio for this user
-        let currentRecords = await prisma.sound.findMany({ where: { UserId_: UserId, isRecording: true }, select: { id_: true } })
-        //Get undesired sound
-        let undesiredSound = (await prisma.user.findUnique({ where: { id_: UserId }, select: { undesiredSounds_: true } }))?.undesiredSounds_
-        //Free all audio recording by this user
-        await prisma.sound.updateMany({ data: { UserId_: null, isRecording: false }, where: { UserId_: UserId, recorded: false, isRecording: true } })
+        //Get recording audio for this user
+        let currentRecordsProm = prisma.sound.findMany({ where: { UserId_: UserId, isRecording: true }, select: { id_: true } })
 
-        // Set undesiredSound for this user
+        //Get undesired sound
+        let undesiredSoundsProm = prisma.user.findUnique({ where: { id_: UserId }, select: { undesiredSounds_: true } })
+
+        let [currentRecords, undesiredSounds] = await Promise.all([currentRecordsProm, undesiredSoundsProm])
+
 
         currentRecords.forEach(obj => {
-            undesiredSound?.push(obj.id_)
+            undesiredSounds?.undesiredSounds_.push(obj.id_)
         })
-        
-        await prisma.user.update({ data: { undesiredSounds_: { set: undesiredSound } }, where: { id_: UserId } })
 
+
+        // Set undesiredSound for this user
+        let userProm = prisma.user.update({ data: { undesiredSounds_: { set: undesiredSounds?.undesiredSounds_ } }, where: { id_: UserId } })
         //Get new record for this user
-        let newRecord = await prisma.sound.findFirst({ where: { AND: { isRecording: false, recorded: false, id_: { notIn: undesiredSound } } } })
+        let newRecordProm = prisma.sound.findFirst({ where: { AND: { isRecording: false, recorded: false, id_: { notIn: undesiredSounds?.undesiredSounds_ } } } })
+        //Free all audio recording by this user
+        let freeUserRecords = prisma.sound.updateMany({ data: { UserId_: null, isRecording: false }, where: { UserId_: UserId, recorded: false, isRecording: true } })
+
+        let [, newRecord,] = await Promise.all([userProm, newRecordProm, freeUserRecords])
 
         return prisma.sound.update({ select: { id_: true, ref: true, fr: true, bci: true }, data: { isRecording: true, User_: { connect: { id_: UserId } } }, where: { id_: newRecord?.id_ } })
+
     }
 
 }

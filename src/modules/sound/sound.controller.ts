@@ -1,8 +1,6 @@
 import express from "express";
 import multer from "multer";
 import multerS3 from "multer-s3";
-import { join } from "path";
-import { cwd } from "process";
 import PTypes from "../../configs/db/types"
 import soundService from "./sound.service"
 import AWS from "aws-sdk"
@@ -14,8 +12,6 @@ type PError = PTypes.PrismaClientKnownRequestError | Error
 
 let s3 = new AWS.S3({ apiVersion: '2006-03-01', accessKeyId: "AKIAVE5OQIXAXP7N2UOM", secretAccessKey: "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" });
 AWS.config.update({ region: 'eu-west-3' });
-
-// const upload = multer({ storage: storage })
 
 var upload = multer({
     storage: multerS3({
@@ -45,8 +41,9 @@ router
     .post("/send", async (req: express.Request, res: express.Response) => {
 
         let dataFile: any = req.file
+        
         sound.saveSound(Number(req.body.soundId), dataFile.location, Number(req.body.userId))
-            .then((data) => { console.timeEnd("de"); res.status(201).json(data); })
+            .then((data) => { res.status(201).json(data); })
             .catch((error: Error) => {
                 console.error(error);
                 res.status(500).json({ error: "InternalError", message: "Something wrong" });
