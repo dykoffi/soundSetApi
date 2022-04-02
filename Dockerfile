@@ -3,7 +3,7 @@
 FROM dykoffi/node:alpine as base
 
 WORKDIR /App
-RUN yarn global add cqx
+RUN yarn global add cqx@latest
 COPY package.json ./
 RUN yarn install
 
