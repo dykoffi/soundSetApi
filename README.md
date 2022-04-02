@@ -26,4 +26,4 @@
 2. Define your model in **prisma/schema.prisma**
 3. Use **yarn db:start** to run your Dev BD instance
 4. Use **yarn db:update** to update API and database structure following your model in schema.prisma file
-5. Use **yarn start** to run project
+5. Use **yarn start** to run project.
