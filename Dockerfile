@@ -8,6 +8,8 @@ COPY package.json ./
 RUN yarn install
 
 COPY . ./
+RUN prisma generate
+
 
 RUN cqx build
 
