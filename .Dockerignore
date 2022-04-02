@@ -3,4 +3,3 @@ Dockerfile
 test
 remData.ts
 seeder.ts
-tsconfig.json
