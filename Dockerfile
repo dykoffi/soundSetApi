@@ -15,7 +15,7 @@ RUN cqx build
 
 # ################### Release Stage #######################
 
-FROM base as release
+FROM dykoffi/node:alpine as release
 
 WORKDIR /App
 COPY --from=base /App/build/package.json ./
@@ -24,6 +24,7 @@ COPY --from=base /App/build ./
 
 WORKDIR /App/build
 RUN ls
+RUN cat ./package.json
 RUN prisma generate
 
 EXPOSE 80
