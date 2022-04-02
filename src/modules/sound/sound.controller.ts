@@ -1,31 +1,22 @@
 import express from "express";
 import multer from "multer";
-import multerS3 from "multer-s3";
 import PTypes from "../../configs/db/types"
 import soundService from "./sound.service"
-import AWS from "aws-sdk"
-
+import { Storage } from "@google-cloud/storage"
+import { cwd } from "process";
+import { join } from "path";
+import { format } from "util";
 const router: express.Router = require("express").Router();
 const sound = new soundService();
 
 type PError = PTypes.PrismaClientKnownRequestError | Error
 
-let s3 = new AWS.S3({ apiVersion: '2006-03-01', accessKeyId: "AKIAVE5OQIXAXP7N2UOM", secretAccessKey: "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" });
-AWS.config.update({ region: 'eu-west-3' });
 
-var upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: 'audioset-recoder',
-        acl: 'public-read',
+let storage = new Storage({ projectId: "audiosetrecorder-2022", keyFilename: join(cwd(), ".cqx/keys/gs.json") })
+let bucket = storage.bucket("audioset-recorder")
 
-        metadata: function (req, file, cb) {
-            cb(null, { fieldName: file.fieldname });
-        },
-        key: function (req, file, cb) {
-            cb(null, file.originalname + ".mp3")
-        }
-    })
+let upload = multer({
+    storage: multer.memoryStorage()
 })
 
 router
@@ -38,16 +29,42 @@ router
 
 
     .use("/send", upload.single("audio"))
-    .post("/send", async (req: express.Request, res: express.Response) => {
+    .post("/send", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
-        let dataFile: any = req.file
-        
-        sound.saveSound(Number(req.body.soundId), dataFile.location, Number(req.body.userId))
-            .then((data) => { res.status(201).json(data); })
-            .catch((error: Error) => {
-                console.error(error);
-                res.status(500).json({ error: "InternalError", message: "Something wrong" });
-            });
+        if (!req.file) {
+            res.status(400).send('No file uploaded.');
+            return;
+        }
+
+        let filename = `${req.file.originalname}.mp3`
+
+        const blob = bucket.file(filename);
+        const blobStream = blob.createWriteStream();
+
+
+        blobStream.on('error', err => {
+            next(err);
+        });
+
+        blobStream.on('finish', async () => {
+            // The public URL can be used to directly access the file via HTTP.
+            const publicUrl = format(
+                `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+            );
+
+            await bucket.file(filename).makePublic()
+
+            sound.saveSound(Number(req.body.soundId), publicUrl, Number(req.body.userId))
+                .then((data) => { res.status(201).json(data); })
+                .catch((error: Error) => {
+                    console.error(error);
+                    res.status(500).json({ error: "InternalError", message: "Something wrong" });
+                });
+        });
+
+        blobStream.end(req.file.buffer);
+
+
 
     })
 
