@@ -5,7 +5,7 @@ FROM dykoffi/node:light as base
 WORKDIR /App
 RUN yarn global add cqx@latest prisma@latest
 COPY package.json ./
-RUN yarn install --prod
+RUN yarn install
 
 COPY . ./
 
