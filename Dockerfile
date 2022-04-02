@@ -1,30 +1,29 @@
-FROM dykoffi/node:alpine
+# ################### Building Stage #######################
 
-# Define labels for giving more information about this image
-LABEL description=""
-LABEL maintainers="koffiedy@gmail.com"
-LABEL name="soundSetApi"
-LABEL vendor="CIQL Microservices"
-LABEL version="1.0.0"
+FROM dykoffi/node:alpine as base
 
-# Set ENV variables
-ENV DATABASE_URL=
-
-# Copy package.json file
-RUN mkdir /App
-COPY package.json /App
 WORKDIR /App
+COPY package.json ./
+RUN yarn install
 
-# install all nodejs package
+COPY . ./
+
+RUN npx cqx build
+
+# ################### Release Stage #######################
+
+FROM base as release
+
+WORKDIR /App
+COPY --from=base /App/build/package.json ./
 RUN yarn install --prod
+COPY --from=base /App/build ./
 
-COPY build /App
+WORKDIR /App/build
 RUN prisma generate
 
-# Expose port for communication
 EXPOSE 80
 
-# update database url info
 CMD echo "DATABASE_URL=${DATABASE_URL}" > .env \
     && prisma migrate deploy \
-    && NODE_ENV=production pm2-runtime index.js --name soundSetApi -i max
+    && NODE_ENV=production pm2-runtime index.js --name soundSetApi
