@@ -3,12 +3,13 @@
 FROM dykoffi/node:alpine as base
 
 WORKDIR /App
+RUN yarn global add cqx
 COPY package.json ./
 RUN yarn install
 
 COPY . ./
 
-RUN npx cqx build
+RUN cqx build
 
 # ################### Release Stage #######################
 
