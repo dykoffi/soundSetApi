@@ -5,12 +5,11 @@ FROM dykoffi/node:light as base
 WORKDIR /App
 RUN yarn global add cqx@latest prisma@latest
 COPY package.json ./
-RUN yarn install
+RUN yarn install --prod
 
 COPY . ./
 
 RUN prisma generate
-
 
 RUN cqx build
 
@@ -24,6 +23,7 @@ RUN yarn install --prod
 COPY --from=base /App/build ./
 
 WORKDIR /App/build
+RUN ls
 RUN prisma generate
 
 EXPOSE 80
