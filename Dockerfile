@@ -20,11 +20,9 @@ FROM dykoffi/node:alpine as release
 WORKDIR /App
 COPY --from=base /App/build/package.json ./
 RUN yarn install --prod
-COPY --from=base /App/build ./
+COPY --from=base /App/build/ ./
 
-WORKDIR /App/build
-RUN ls
-RUN cat ./package.json
+WORKDIR /App
 RUN prisma generate
 
 EXPOSE 80
