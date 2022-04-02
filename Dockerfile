@@ -1,13 +1,14 @@
 # ################### Building Stage #######################
 
-FROM dykoffi/node:alpine as base
+FROM dykoffi/node:light as base
 
 WORKDIR /App
-RUN yarn global add cqx@latest
+RUN yarn global add cqx@latest prisma@latest
 COPY package.json ./
 RUN yarn install
 
 COPY . ./
+
 RUN prisma generate
 
 
