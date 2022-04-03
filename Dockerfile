@@ -15,11 +15,12 @@ RUN cqx build
 
 # ################### Release Stage #######################
 
-FROM dykoffi/node:alpine as release
+FROM dykoffi/node:light as release
 
 WORKDIR /App
 COPY --from=base /App/build/package.json ./
 RUN yarn install --prod
+RUN yarn global add prisma@latest
 COPY --from=base /App/build/ ./
 
 WORKDIR /App
