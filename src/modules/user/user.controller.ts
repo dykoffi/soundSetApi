@@ -18,7 +18,7 @@ router
 
     .post("/", async (req: express.Request, res: express.Response) => {
 
-        user.addOne(req.body)
+        user.addOne({...req.body, year : Number(req.body.year)})
             .then(async (data) => {
                 let token = await giveToken(user, "user", "30d")
                 res.status(201).json({ data: { ...data, token }, message: "object user created successfully" });

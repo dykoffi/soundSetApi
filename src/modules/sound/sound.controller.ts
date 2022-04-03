@@ -6,6 +6,7 @@ import { Storage } from "@google-cloud/storage"
 import { cwd } from "process";
 import { join } from "path";
 import { format } from "util";
+import { checkToken } from "cqx-secure";
 const router: express.Router = require("express").Router();
 const sound = new soundService();
 
@@ -27,6 +28,7 @@ router
      * @access public
      */
 
+    .use(checkToken("user"))
 
     .use("/send", upload.single("audio"))
     .post("/send", async (req: express.Request, res: express.Response, next: express.NextFunction) => {

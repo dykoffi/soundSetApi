@@ -14,6 +14,8 @@
 - [MongoDB](https://www.mongodb.com/)
 
 
+us-docker.pkg.dev/audiosetrecorder-2022/gcr.io
+europe-docker.pkg.dev/audiosetrecorder-2022/eu.gcr.io
 ### Documentation
 - [Prisma](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference) For making good schema.
 - [Swagger](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#schemaObject) For making good api's documentation.
