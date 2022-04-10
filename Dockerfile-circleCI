@@ -1,9 +1,6 @@
-FROM ubuntu:latest as release
-
-RUN wget -qO- https://deb.nodesource.com/setup_16.x | sudo -E bash - \
-    sudo apt install -y nodejs
-
+FROM dykoffi/node:pm2-light as release
 WORKDIR /App
 COPY build ./
+RUN yarn install --prod
 EXPOSE 80
-CMD NODE_ENV=production npx pm2-runtime index.js --name audiosetAPI
+CMD NODE_ENV=production pm2-runtime index.js --name audiosetAPI
