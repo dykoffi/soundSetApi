@@ -1,0 +1,87 @@
+version: 2.1
+executors:
+  ubuntu-default:
+    machine:
+      image: ubuntu-2004:current
+    shell: bash
+    environment:
+      VERSION: 1.3.0
+      REGISTRY_URL: docker.pkg.dev
+      REPO: audioset
+      GOOGLE_COMPUTE_REGION: europe-north1
+      GOOGLE_PROJECT_ID: audiosetrecorder-2022
+      SERVICE_NAME: audiosetapi
+
+commands:
+  restore_cache_cmd:
+    steps:
+      - restore_cache:
+          keys:
+            - yarn-v1-{{checksum "yarn.lock"}}
+            - yarn-v1-
+
+  save_cache_cmd:
+    steps:
+      - save_cache:
+          paths:
+            - ./node_modules
+          key: yarn-v1-{{checksum "yarn.lock"}}
+
+jobs:
+  build_deploy_on_cloud_run:
+    executor: ubuntu-default
+    steps:
+      - checkout
+
+      ####################### BUILD PROJECT ###########################
+
+      - restore_cache_cmd
+      - run:
+          name: Install dependencies
+          command: yarn install
+      - save_cache_cmd
+      - run:
+          name: Build project
+          command: npx cqx build
+      - run:
+          name: Update production database
+          command: |
+            echo "DATABASE_URL=${DATABASE_URL}" > .env
+            npx prisma migrate deploy
+          working_directory: build
+      - run: yarn install --prod
+      - run: cp -r ./node_modules build/node_modules
+
+      ####################### Initialize gcloud CLI ###########################
+
+      - run:
+          name: Initialize gcloud CLI to connect to Google cloud
+          command: |
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
+            gcloud --quiet config set project $GOOGLE_PROJECT_ID
+
+      ####################### BUILD & DEPOLY DOCKER IMAGE ###########################
+
+      - run:
+          name: Building docker Image
+          command: docker build
+            -t ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}/${GOOGLE_PROJECT_ID}/${REPO}/${SERVICE_NAME}:${VERSION}
+            -f Dockerfile-circleCI .
+      - run:
+          name: push image to Artifact Registry
+          command: docker push ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}/${GOOGLE_PROJECT_ID}/${REPO}/${SERVICE_NAME}:${VERSION}
+      - run:
+          name: Deploying container to Cloud Run service
+          command: gcloud run deploy $SERVICE_NAME
+            --image ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}/${GOOGLE_PROJECT_ID}/${REPO}/${SERVICE_NAME}:${VERSION}
+            --port 80
+            --region $GOOGLE_COMPUTE_REGION
+            --allow-unauthenticated
+
+workflows:
+  deploy:
+    jobs:
+      - build_deploy_on_cloud_run:
+          context: Gcloud

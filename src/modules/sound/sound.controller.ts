@@ -65,9 +65,6 @@ router
         });
 
         blobStream.end(req.file.buffer);
-
-
-
     })
 
     /**
