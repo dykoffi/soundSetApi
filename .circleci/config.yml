@@ -46,7 +46,9 @@ jobs:
           name: Build project
           command: |
             npx cqx build
-            echo $GCLOUD_STORAGE_KEY > ./build/.cqx/keys/gs.json
+      - run:
+          name: Enable Google Storage Key
+          command: echo $GCLOUD_STORAGE_KEY > ./build/.cqx/keys/gs.json
       - run:
           name: Update production database
           command: |
