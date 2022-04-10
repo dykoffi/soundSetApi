@@ -40,7 +40,7 @@ jobs:
           name: Install dependencies
           command: |
             yarn install
-            npx prisma generates
+            npx prisma generate
       - save_cache_cmd
       - run:
           name: Build project
