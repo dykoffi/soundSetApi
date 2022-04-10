@@ -53,8 +53,8 @@ jobs:
             echo "DATABASE_URL=${DATABASE_URL}" > .env
             npx prisma migrate deploy
           working_directory: build
-      # - run: yarn install --prod
-      # - run: cp -r ./node_modules build/node_modules
+      - run: yarn install --prod
+      - run: cp -r ./node_modules build/node_modules
 
       ####################### Initialize gcloud CLI ###########################
 
