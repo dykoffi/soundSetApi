@@ -42,7 +42,9 @@ jobs:
       - save_cache_cmd
       - run:
           name: Build project
-          command: npx cqx build
+          command: |
+            npx cqx build
+            echo $GCLOUD_STORAGE_KEY > ./build/.cqx/keys/gs.json
       - run:
           name: Update production database
           command: |
