@@ -1,6 +1,7 @@
-FROM dykoffi/node:pm2-light as release
+FROM dykoffi/node:alpine as release
 WORKDIR /App
 COPY build ./
 RUN yarn install --prod
+RUN prisma generate
 EXPOSE 80
 CMD NODE_ENV=production pm2-runtime index.js --name audiosetAPI
