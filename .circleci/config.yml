@@ -38,7 +38,9 @@ jobs:
       - restore_cache_cmd
       - run:
           name: Install dependencies
-          command: yarn install
+          command: |
+            yarn install
+            npx prisma generates
       - save_cache_cmd
       - run:
           name: Build project
