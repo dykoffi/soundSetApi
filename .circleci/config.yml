@@ -51,7 +51,11 @@ jobs:
           name: Enable Google Storage Key
           command: echo $GCLOUD_STORAGE_KEY > ./build/.cqx/keys/gs.json
       - run: yarn install --prod
-      - run: cp -r ./node_modules build/node_modules
+      - run:
+          name: Copy file in built project
+          command: |
+            cp -r ./node_modules build/node_modules
+            cp Dockerfile-circleci build/
       - run:
           name: Update production database
           command: |
@@ -60,25 +64,26 @@ jobs:
             npx prisma generate
           working_directory: build
 
+      - run:
+          name: Building docker Image
+          command: docker build
+            -t ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}/${GOOGLE_PROJECT_ID}/${REPO}/${SERVICE_NAME}:${VERSION}
+            -f Dockerfile-circleci .
+          working_directory: build
+
       ####################### Initialize gcloud CLI ###########################
 
       - run:
           name: Initialize gcloud CLI to connect to Google cloud
           command: |
             echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
-          # gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-          # gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
-          # gcloud --quiet config set project $GOOGLE_PROJECT_ID
+
       - run: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
       - run: gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
       - run: gcloud --quiet config set project $GOOGLE_PROJECT_ID
+
       ####################### BUILD & DEPOLY DOCKER IMAGE ###########################
 
-      - run:
-          name: Building docker Image
-          command: docker build
-            -t ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}/${GOOGLE_PROJECT_ID}/${REPO}/${SERVICE_NAME}:${VERSION}
-            -f Dockerfile-circleci .
       - run:
           name: push image to Artifact Registry
           command: docker push ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}/${GOOGLE_PROJECT_ID}/${REPO}/${SERVICE_NAME}:${VERSION}

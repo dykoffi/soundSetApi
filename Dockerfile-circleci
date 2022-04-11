@@ -1,5 +1,5 @@
 FROM dykoffi/nodepm2:latest as release
 WORKDIR /App
-COPY build ./
+COPY . ./
 EXPOSE 80
 CMD NODE_ENV=production pm2-runtime index.js --name audiosetAPI
