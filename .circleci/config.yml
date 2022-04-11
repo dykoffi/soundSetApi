@@ -14,14 +14,14 @@ executors:
       SERVICE_NAME: audiosetapi
 
 commands:
-  restore_cache_cmd:
+  restore_cache_yarn:
     steps:
       - restore_cache:
           keys:
             - yarn-v1-{{checksum "yarn.lock"}}
             - yarn-v1-
 
-  save_cache_cmd:
+  save_cache_yarn:
     steps:
       - save_cache:
           paths:
@@ -36,13 +36,13 @@ jobs:
 
       ####################### BUILD PROJECT ###########################
 
-      - restore_cache_cmd
+      - restore_cache_yarn
       - run:
           name: Install dependencies
           command: |
             yarn install
-            npx prisma generate
-      - save_cache_cmd
+          # npx prisma generate
+      - save_cache_yarn
       - run:
           name: Build project
           command: |
