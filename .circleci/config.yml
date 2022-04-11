@@ -66,10 +66,12 @@ jobs:
           name: Initialize gcloud CLI to connect to Google cloud
           command: |
             echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
-            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-            gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
-            gcloud --quiet config set project $GOOGLE_PROJECT_ID
-
+          # gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+          # gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
+          # gcloud --quiet config set project $GOOGLE_PROJECT_ID
+      - run: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+      - run: gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
+      - run: gcloud --quiet config set project $GOOGLE_PROJECT_ID
       ####################### BUILD & DEPOLY DOCKER IMAGE ###########################
 
       - run:
