@@ -6,7 +6,7 @@ executors:
       image: ubuntu-2004:current
     shell: bash
     environment:
-      VERSION: 1.3.0
+      VERSION: 1.4.0
       REGISTRY_URL: docker.pkg.dev
       REPO: audioset
       GOOGLE_COMPUTE_REGION: europe-north1
