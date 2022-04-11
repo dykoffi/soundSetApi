@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "soundsetapi",
+        "title": "Audioset Api",
         "version": "1.0.0",
         "contact": {
             "email": "koffiedy@gmail.com",
@@ -40,8 +40,7 @@
                     ]
                 },
                 "User_": {
-                    "anyOf": [
-                        {
+                    "anyOf": [{
                             "$ref": "#/definitions/User"
                         },
                         {
