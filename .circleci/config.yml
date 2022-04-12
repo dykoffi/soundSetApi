@@ -14,7 +14,7 @@ executors:
       SERVICE_NAME: audiosetapi
 
 orbs:
-  grc: circleci/gcp-gcr@0.13.0
+  gcp: circleci/gcp-gcr@0.13.0
 
 commands:
   restore_cache_yarn:
