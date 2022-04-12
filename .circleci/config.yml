@@ -25,14 +25,14 @@ commands:
     steps:
       - restore_cache:
           keys:
-            - gcloud-v1-{{checksum "gcloud-service-key.json"}}
+            - gcloud-v1-{{checksum "${HOME}/gcloud-service-key.json"}}
 
   save_cache_gcloud:
     steps:
       - save_cache:
           paths:
             - ~/.config/gcloud
-          key: gcloud-v1-{{checksum "gcloud-service-key.json"}}
+          key: gcloud-v1-{{checksum "${HOME}/gcloud-service-key.json"}}
 
   save_cache_yarn:
     steps:
