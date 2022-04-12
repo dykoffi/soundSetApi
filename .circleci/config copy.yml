@@ -29,7 +29,7 @@ commands:
           key: yarn-v1-{{checksum "yarn.lock"}}
 
 jobs:
-  build:
+  build_deploy_on_cloud_run:
     executor: ubuntu-default
     steps:
       - checkout
@@ -46,7 +46,9 @@ jobs:
           name: Build project
           command: |
             npx cqx build
-
+      - run:
+          name: Enable Google Storage Key
+          command: echo $GCLOUD_STORAGE_KEY > ./build/.cqx/keys/gs.json
       - run: yarn install --prod
       - run:
           name: Copy file in built project
@@ -69,12 +71,6 @@ jobs:
           working_directory: build
 
       ####################### Initialize gcloud CLI ###########################
-  gcloud:
-    executor: ubuntu-default
-    steps:
-      - run:
-          name: Enable Google Storage Key
-          command: echo $GCLOUD_STORAGE_KEY > ./build/.cqx/keys/gs.json
 
       - run:
           name: Initialize gcloud CLI to connect to Google cloud
@@ -85,12 +81,8 @@ jobs:
       - run: gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
       - run: gcloud --quiet config set project $GOOGLE_PROJECT_ID
 
-
-
       ####################### BUILD & DEPOLY DOCKER IMAGE ###########################
-  deploy:
-    executor: ubuntu-default
-    steps:
+
       - run:
           name: push image to Artifact Registry
           command: docker push ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}/${GOOGLE_PROJECT_ID}/${REPO}/${SERVICE_NAME}:${VERSION}
@@ -105,6 +97,5 @@ jobs:
 workflows:
   deploy:
     jobs:
-      - build
-      - gcloud:
+      - build_deploy_on_cloud_run:
           context: Gcloud
