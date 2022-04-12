@@ -13,6 +13,9 @@ executors:
       GOOGLE_PROJECT_ID: audiosetrecorder-2022
       SERVICE_NAME: audiosetapi
 
+orbs:
+  grc: circleci/gcp-gcr@0.13.0
+
 commands:
   restore_cache_yarn:
     steps:
@@ -72,14 +75,19 @@ jobs:
 
       ####################### Initialize gcloud CLI ###########################
 
-      - run:
-          name: Initialize gcloud CLI to connect to Google cloud
-          command: |
-            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+      - gcp/gcp-auth:
+          gcloud-service-key: GCLOUD_SERVICE_KEY
+          google-project-id: GOOGLE_PROJECT_ID
+          google-compute-zone: GOOGLE_COMPUTE_REGION
 
-      - run: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-      - run: gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
-      - run: gcloud --quiet config set project $GOOGLE_PROJECT_ID &
+      # - run:
+      #     name: Initialize gcloud CLI to connect to Google cloud
+      #     command: |
+      #       echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+
+      # - run: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+      # - run: gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
+      # - run: gcloud --quiet config set project $GOOGLE_PROJECT_ID &
 
       ####################### BUILD & DEPOLY DOCKER IMAGE ###########################
 
