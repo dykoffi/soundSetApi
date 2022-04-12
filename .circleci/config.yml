@@ -53,9 +53,10 @@ jobs:
           name: Copy file in built project
           command: |
             cp -r ./node_modules build/node_modules
+            cp -r ./yarn.lock build/yarn.lock
             cp Dockerfile-circleci build/
       - run: 
-          command: npm prune --production
+          command: yarn install --prod
           working_directory: build
       - run:
           name: Update production database
