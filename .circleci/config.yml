@@ -13,9 +13,6 @@ executors:
       GOOGLE_PROJECT_ID: audiosetrecorder-2022
       SERVICE_NAME: audiosetapi
 
-orbs:
-  gcp: circleci/gcp-gcr@0.13.0
-
 commands:
   restore_cache_yarn:
     steps:
@@ -23,6 +20,19 @@ commands:
           keys:
             - yarn-v1-{{checksum "yarn.lock"}}
             - yarn-v1-
+
+  restore_cache_gcloud:
+    steps:
+      - restore_cache:
+          keys:
+            - gcloud-v1-{{checksum "gcloud-service-key.json"}}
+
+  save_cache_gcloud:
+    steps:
+      - save_cache:
+          paths:
+            - ~/.config/gcloud
+          key: gcloud-v1-{{checksum "gcloud-service-key.json"}}
 
   save_cache_yarn:
     steps:
@@ -74,20 +84,16 @@ jobs:
           working_directory: build
 
       ####################### Initialize gcloud CLI ###########################
+      - run:
+          name: Initialize gcloud CLI to connect to Google cloud
+          command: |
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
 
-      - gcp/gcr-auth:
-          gcloud-service-key: GCLOUD_SERVICE_KEY
-          google-project-id: GOOGLE_PROJECT_ID
-          google-compute-zone: GOOGLE_COMPUTE_REGION
-
-      # - run:
-      #     name: Initialize gcloud CLI to connect to Google cloud
-      #     command: |
-      #       echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
-
-      # - run: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-      # - run: gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
-      # - run: gcloud --quiet config set project $GOOGLE_PROJECT_ID &
+      - restore_cache_gcloud
+      - run: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+      - run: gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
+      - run: gcloud --quiet config set project $GOOGLE_PROJECT_ID
+      - cache_cache_gcloud
 
       ####################### BUILD & DEPOLY DOCKER IMAGE ###########################
 
