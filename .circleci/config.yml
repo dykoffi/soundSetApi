@@ -55,14 +55,14 @@ jobs:
             cp -r ./node_modules build/node_modules
             cp Dockerfile-circleci build/
       - run: 
-          command: npm prune
+          command: npm prune --production
           working_directory: build
       - run:
           name: Update production database
           command: |
-            echo "DATABASE_URL=${DATABASE_URL}" > .env &
-            npx prisma migrate deploy &
-            npx prisma generate &
+            echo "DATABASE_URL=${DATABASE_URL}" > .env
+            npx prisma migrate deploy
+            npx prisma generate
           working_directory: build
 
       - run:
