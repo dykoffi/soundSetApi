@@ -111,3 +111,7 @@ workflows:
       - build
       - gcloud:
           context: Gcloud
+      - deploy:
+          requires:
+            - build
+            - gcloud
