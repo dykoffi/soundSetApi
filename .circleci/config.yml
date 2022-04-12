@@ -49,21 +49,18 @@ jobs:
       - run:
           name: Enable Google Storage Key
           command: echo $GCLOUD_STORAGE_KEY > ./build/.cqx/keys/gs.json
+      - run: yarn install --prod
       - run:
           name: Copy file in built project
           command: |
             cp -r ./node_modules build/node_modules
-            cp -r ./yarn.lock build/yarn.lock
             cp Dockerfile-circleci build/
-      - run: 
-          command: yarn install --prod
-          working_directory: build
       - run:
           name: Update production database
           command: |
-            echo "DATABASE_URL=${DATABASE_URL}" > .env
-            npx prisma migrate deploy
-            npx prisma generate
+            echo "DATABASE_URL=${DATABASE_URL}" > .env &
+            npx prisma migrate deploy &
+            npx prisma generate &
           working_directory: build
 
       - run:
