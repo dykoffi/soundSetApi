@@ -25,7 +25,7 @@ commands:
     steps:
       - save_cache:
           paths:
-            - ./node_modules
+            - ./node_modules.zip
           key: yarn-v1-{{checksum "yarn.lock"}}
 
 jobs:
@@ -47,12 +47,16 @@ jobs:
           command: |
             npx cqx build
 
-      # - run: yarn install
       - run:
           name: Copy file in built project
           command: |
             cp -r ./node_modules build/node_modules
             cp Dockerfile-circleci build/
+
+      - run: 
+          command: npm prune
+          working_directory: build
+          
       - run:
           name: Enable Google Storage Key
           command: echo $GCLOUD_STORAGE_KEY > ./build/.cqx/keys/gs.json
