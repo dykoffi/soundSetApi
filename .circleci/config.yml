@@ -79,7 +79,7 @@ jobs:
 
       - run: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
       - run: gcloud auth configure-docker ${GOOGLE_COMPUTE_REGION}-${REGISTRY_URL}
-      # - run: gcloud --quiet config set project $GOOGLE_PROJECT_ID &
+      - run: gcloud --quiet config set project $GOOGLE_PROJECT_ID &
 
       ####################### BUILD & DEPOLY DOCKER IMAGE ###########################
 
