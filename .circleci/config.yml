@@ -49,12 +49,15 @@ jobs:
       - run:
           name: Enable Google Storage Key
           command: echo $GCLOUD_STORAGE_KEY > ./build/.cqx/keys/gs.json
-      - run: yarn install --prod
       - run:
           name: Copy file in built project
           command: |
             cp -r ./node_modules build/node_modules
             cp Dockerfile-circleci build/
+      - run:  
+          name: Update production database
+          command: yarn install
+          working_directory: build
       - run:
           name: Update production database
           command: |
