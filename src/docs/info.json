@@ -40,7 +40,8 @@
                     ]
                 },
                 "User_": {
-                    "anyOf": [{
+                    "anyOf": [
+                        {
                             "$ref": "#/definitions/User"
                         },
                         {

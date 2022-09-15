@@ -619,12 +619,12 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@prisma/client@3.12.0":
-  version "3.12.0"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-3.12.0.tgz#a0eb49ffea5c128dd11dffb896d7139a60073d12"
-  integrity sha512-4NEQjUcWja/NVBvfuDFscWSk1/rXg3+wj+TSkqXCb1tKlx/bsUE00rxsvOvGg7VZ6lw1JFpGkwjwmsOIc4zvQw==
+"@prisma/client@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-4.3.1.tgz#b9aad9bd9bd43e7f715ec1d763c8bd9273688800"
+  integrity sha512-FA0/d1VMJNWqzU7WVWTNWJ+lGOLR9JUBnF73GdIPAEVo/6dWk4gHx0EmgeU+SMv4MZoxgOeTBJF2azhg7x0hMw==
   dependencies:
-    "@prisma/engines-version" "3.12.0-37.22b822189f46ef0dc5c5b503368d1bee01213980"
+    "@prisma/engines-version" "4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b"
 
 "@prisma/debug@3.11.1":
   version "3.11.1"
@@ -663,10 +663,10 @@
     terminal-link "2.1.1"
     undici "5.0.0"
 
-"@prisma/engines-version@3.12.0-37.22b822189f46ef0dc5c5b503368d1bee01213980":
-  version "3.12.0-37.22b822189f46ef0dc5c5b503368d1bee01213980"
-  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-3.12.0-37.22b822189f46ef0dc5c5b503368d1bee01213980.tgz#829ca3d9d0d92555f44644606d4edfd45b2f5886"
-  integrity sha512-o+jo8d7ZEiVpcpNWUDh3fj2uPQpBxl79XE9ih9nkogJbhw6P33274SHnqheedZ7PyvPIK/mvU8MLNYgetgXPYw==
+"@prisma/engines-version@4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b":
+  version "4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b"
+  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b.tgz#a564dd6fb6f25405fe06164989ebd8a1e4bb3508"
+  integrity sha512-8yWpXkQRmiSfsi2Wb/ZS5D3RFbeu/btL9Pm/gdF4phB0Lo5KGsDFMxFMgaD64mwED2nHc8ZaEJg/+4Jymb9Znw==
 
 "@prisma/engines@3.12.0-37.22b822189f46ef0dc5c5b503368d1bee01213980":
   version "3.12.0-37.22b822189f46ef0dc5c5b503368d1bee01213980"
@@ -4460,13 +4460,6 @@ prisma-json-schema-generator@^2.0.9:
   dependencies:
     "@prisma/generator-helper" "3.12.0"
     "@prisma/sdk" "3.12.0"
-
-prisma@^3.12.0:
-  version "3.12.0"
-  resolved "https://registry.yarnpkg.com/prisma/-/prisma-3.12.0.tgz#9675e0e72407122759d3eadcb6d27cdccd3497bd"
-  integrity sha512-ltCMZAx1i0i9xuPM692Srj8McC665h6E5RqJom999sjtVSccHSD8Z+HSdBN2183h9PJKvC5dapkn78dd0NWMBg==
-  dependencies:
-    "@prisma/engines" "3.12.0-37.22b822189f46ef0dc5c5b503368d1bee01213980"
 
 process-nextick-args@~2.0.0:
   version "2.0.1"
